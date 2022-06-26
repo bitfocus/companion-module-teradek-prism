@@ -1,11 +1,32 @@
 {
-  "name": "companion-module-teradek-prismflex",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "teradek-prismflex",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [
+		"prism flex",
+		"encoder"
+	],
+	"manufacturer": "Teradek",
+	"product": [
+		"Prism Flex"
+	],
+	"shortname": "teradek-prismflex",
+	"description": "Companion module for Teradek Prism Flex",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Michael Larsen <michael.larsen91@gmail.com>",
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-teradek-prismflex#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-teradek-prismflex/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-teradek-prismflex.git"
+	},
+	"dependencies": {
+		"mqtt": "^4.3.5"
+	}
 }
