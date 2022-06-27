@@ -185,7 +185,7 @@ module.exports = {
 			label: 'Recording State',
 			bank: {
 				style: 'text',
-				text: '$(teradek-vidiux:recording_state)',
+				text: '$(teradek-prismflex:recording_state)',
 				size: '14',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -259,7 +259,7 @@ module.exports = {
 			label: 'Recording Uptime',
 			bank: {
 				style: 'text',
-				text: '$(teradek-vidiux:recording_uptime)',
+				text: '$(teradek-prismflex:recording_uptime)',
 				size: '14',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -395,7 +395,7 @@ module.exports = {
 			label: 'Streaming State',
 			bank: {
 				style: 'text',
-				text: '$(teradek-vidiux:streaming_state)',
+				text: '$(teradek-prismflex:streaming_state)',
 				size: '14',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -449,7 +449,7 @@ module.exports = {
 			label: 'Streaming Uptime',
 			bank: {
 				style: 'text',
-				text: '$(teradek-vidiux:streaming_uptime)',
+				text: '$(teradek-prismflex:streaming_uptime)',
 				size: '14',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),

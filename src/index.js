@@ -90,7 +90,7 @@ instance.prototype.config_fields = function () {
 			id: 'info',
 			width: 12,
 			label: 'Information',
-			value: 'This module controls the Teradek VidiU X.',
+			value: 'This module controls the Teradek Prism Flex.',
 		},
 		{
 			type: 'textinput',
