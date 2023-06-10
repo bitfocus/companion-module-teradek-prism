@@ -1,461 +1,510 @@
-module.exports = {
-	setPresets: function (i) {
-		let self = i;
-		let presets = [];
+import { combineRgb } from '@companion-module/base'
 
-		const foregroundColor = self.rgb(255, 255, 255); // White
-		const foregroundColorBlack = self.rgb(0, 0, 0); // Black
-		const backgroundColorRed = self.rgb(255, 0, 0); // Red
-		const backgroundColorGreen = self.rgb(0, 255, 0); // Green
-		const backgroundColorYellow = self.rgb(255, 191, 0); // Yellow
-		const backgroundColorOrange = self.rgb(255, 102, 0); // Orange
-		const backgroundColorBlue = self.rgb(0, 0, 255); // Blue
-		const backgroundColorGray = self.rgb(128, 128, 128); // Gray
+export function getPresets() {
+	const foregroundColor = combineRgb(255, 255, 255) // White
+	const foregroundColorBlack = combineRgb(0, 0, 0) // Black
+	const backgroundColorRed = combineRgb(255, 0, 0) // Red
+	const backgroundColorGreen = combineRgb(0, 255, 0) // Green
+	const backgroundColorYellow = combineRgb(255, 191, 0) // Yellow
+	const backgroundColorOrange = combineRgb(255, 102, 0) // Orange
+	const backgroundColorBlue = combineRgb(0, 0, 255) // Blue
+	const backgroundColorGray = combineRgb(128, 128, 128) // Gray
 
-		// ########################
-		// #### System Presets ####
-		// ########################
+	let presets = {}
 
-		presets.push({
-			category: 'Recording',
-			label: 'Recording Start',
-			bank: {
-				style: 'text',
-				text: 'REC\\nSTART',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+	presets.recordingStart = {
+		type: 'button',
+		category: 'Recording',
+		name: 'Recording Start',
+		options: {},
+		style: {
+			text: 'REC\\nSTART',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'recordingControl',
+						options: {
+							command: 'start',
+						},
+					},
+				],
+				up: [],
 			},
-			actions: [
-				{
-					action: 'recordingControl',
-					options: {
-						command: 'start'
-					}
-				}
-			],
-			feedbacks: [
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Offline',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
+		],
+		feedbacks: [
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Offline',
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Not Ready',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorGray
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Preparing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorOrange
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Recording',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Recording',
-			label: 'Recording Stop',
-			bank: {
-				style: 'text',
-				text: 'REC\\nSTOP',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: 'recordingControl',
-					options: {
-						command: 'stop'
-					}
-				}
-			],
-			feedbacks: [
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Offline',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Ready',
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Not Ready',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorGray
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Preparing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorOrange
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Recording',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Recording',
-			label: 'Recording State',
-			bank: {
-				style: 'text',
-				text: '$(teradek-prismflex:recording_state)',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
 			},
-			feedbacks: [
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Offline',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Not Ready',
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorGray,
 				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Not Ready',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorGray
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Preparing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorOrange
-					}
-				},
-				{
-					type: 'recordingState',
-					options: {
-						option: 'Recording',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Recording',
-			label: 'Recording Uptime',
-			bank: {
-				style: 'text',
-				text: '$(teradek-prismflex:recording_uptime)',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
-			}
-		});
-
-		presets.push({
-			category: 'Streaming',
-			label: 'Streaming Start/Publish',
-			bank: {
-				style: 'text',
-				text: 'STREAM\\nSTART',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: 'streamingControl',
-					options: {
-						command: 'publish'
-					}
-				}
-			],
-			feedbacks: [
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Invalid',
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Playing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
-				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Live',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Streaming',
-			label: 'Streaming Stop/Unpublish',
-			bank: {
-				style: 'text',
-				text: 'STREAM\\nSTOP',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
 			},
-			actions: [
-				{
-					action: 'streamingControl',
-					options: {
-						command: 'unpublish'
-					}
-				}
-			],
-			feedbacks: [
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Preparing',
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorOrange,
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Playing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
-				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Live',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Streaming',
-			label: 'Streaming State',
-			bank: {
-				style: 'text',
-				text: '$(teradek-prismflex:streaming_state)',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
 			},
-			feedbacks: [
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Ready',
-					},
-					style: {
-						color: foregroundColorBlack,
-						bgcolor: backgroundColorGreen
-					}
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Recording',
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Invalid',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorYellow
-					}
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
 				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Playing',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorBlue
-					}
-				},
-				{
-					type: 'streamingState',
-					options: {
-						option: 'Live',
-					},
-					style: {
-						color: foregroundColor,
-						bgcolor: backgroundColorRed
-					}
-				}
-			]
-		});
-
-		presets.push({
-			category: 'Streaming',
-			label: 'Streaming Uptime',
-			bank: {
-				style: 'text',
-				text: '$(teradek-prismflex:streaming_uptime)',
-				size: '14',
-				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
-			}
-		});
-
-		return presets;
+			},
+		],
 	}
+
+	presets.recordingStop = {
+		type: 'button',
+		category: 'Recording',
+		name: 'Recording Stop',
+		options: {},
+		style: {
+			text: 'REC\\nSTOP',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'recordingControl',
+						options: {
+							command: 'stop',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Offline',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Ready',
+				},
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Not Ready',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorGray,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Invalid',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Preparing',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorOrange,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Recording',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+			},
+		],
+	}
+
+	presets.recordingState = {
+		type: 'button',
+		category: 'Recording',
+		name: 'Recording State',
+		options: {},
+		style: {
+			text: '$(teradek-prism:recording_state)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Offline',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Ready',
+				},
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Not Ready',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorGray,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Invalid',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Preparing',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorOrange,
+				},
+			},
+			{
+				feedbackId: 'recordingState',
+				options: {
+					option: 'Recording',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+			},
+		],
+	}
+
+	presets.recordingUptime = {
+		type: 'button',
+		category: 'Recording',
+		name: 'Recording Uptime',
+		options: {},
+		style: {
+			text: '$(teradek-prism:recording_uptime)',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets.streamingStart = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Streaming Start/Publish',
+		options: {},
+		style: {
+			text: 'STREAM\\nSTART',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'streamingControl',
+						options: {
+							command: 'publish',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Ready',
+				},
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Invalid',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Playing',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Live',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+			},
+		],
+	}
+
+	presets.streamingStop = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Streaming Stop/Unpublish',
+		options: {},
+		style: {
+			text: 'STREAM\\nSTOP',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'streamingControl',
+						options: {
+							command: 'unpublish',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Ready',
+				},
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Invalid',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Playing',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Live',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+			},
+		],
+	}
+
+	presets.streamingState = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Streaming State',
+		options: {},
+		style: {
+			text: '$(teradek-prism:streaming_state)',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Ready',
+				},
+				style: {
+					color: foregroundColorBlack,
+					bgcolor: backgroundColorGreen,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Invalid',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorYellow,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Playing',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorBlue,
+				},
+			},
+			{
+				feedbackId: 'streamingState',
+				options: {
+					option: 'Live',
+				},
+				style: {
+					color: foregroundColor,
+					bgcolor: backgroundColorRed,
+				},
+			},
+		],
+	}
+
+	presets.streamingUptime = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Streaming Uptime',
+		options: {},
+		style: {
+			text: '$(teradek-prism:streaming_uptime)',
+			size: '14',
+			color: '16777215',
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	return presets
 }

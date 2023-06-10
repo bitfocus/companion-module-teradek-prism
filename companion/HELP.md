@@ -1,6 +1,4 @@
-Teradek Prism Flex
-
-## This module works specifically with the Teradek Prism Flex model. It may not work with the original rack mounted Prism, and has not been tested on other models at this time.
+## Teradek Prism
 
 ## Actions
 
@@ -17,12 +15,12 @@ The actions are separated into the following categories:
 - File name for next recording
 
 **Record With Name**
-*This action sets the fie name and triggers record*
+_This action sets the fie name and triggers record_
 
 -File name for this recording
 
 **Setting Stream Info**
-*Settings currently only work for RTMP mode*
+_Settings currently only work for RTMP mode_
 
 - Stream Name
 - Username
@@ -32,7 +30,7 @@ The actions are separated into the following categories:
 
 **Streaming**
 
-*Depending on your streaming platform, you may need to determine which of these actions will control your stream. The default is Publish/Unpublish.*
+_Depending on your streaming platform, you may need to determine which of these actions will control your stream. The default is Publish/Unpublish._
 
 - Publish
 - Unpublish
@@ -58,14 +56,14 @@ The actions are separated into the following categories:
 ## Feedbacks
 
 - Device Recording State
-	- Recording
-	- Ready
-	- Invalid
-	- Not Ready
-	- Preparing
-	- Offline
+  - Recording
+  - Ready
+  - Invalid
+  - Not Ready
+  - Preparing
+  - Offline
 - Device Streaming State
-	- Live
-	- Ready
-	- Playing
-	- Invalid
+  - Live
+  - Ready
+  - Playing
+  - Invalid

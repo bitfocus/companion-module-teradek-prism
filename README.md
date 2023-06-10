@@ -1,3 +1,3 @@
-# companion-module-teradek-prismflex
+# companion-module-teradek-prism
 
 See HELP.md and LICENSE
