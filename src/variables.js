@@ -13,5 +13,13 @@ export function getVariables() {
 	variables.push({ variableId: 'streaming_state', name: 'Streaming State' })
 	variables.push({ variableId: 'streaming_uptime', name: 'Streaming Uptime' })
 
+	variables.push({ variableId: 'input_format', name: 'Video input format' })
+	variables.push({ variableId: 'input_resolution', name: 'Video input resolution' })
+	variables.push({ variableId: 'input_framerate', name: 'Video input framerate' })
+
+	variables.push({ variableId: 'network_interface', name: 'Current network interface' })
+	variables.push({ variableId: 'network_ip', name: 'Network IP address' })
+	variables.push({ variableId: 'network_status', name: 'Network status' })
+
 	return variables
 }

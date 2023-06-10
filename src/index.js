@@ -42,11 +42,11 @@ class TeradekPrismInstance extends InstanceBase {
 	getConfigFields() {
 		return [
 			{
-				type: 'text',
+				type: 'static-text',
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: 'This module controls the Teradek Prism Flex.',
+				value: 'This module controls the Teradek Prism and Prism Flex.',
 			},
 			{
 				type: 'textinput',
@@ -159,8 +159,8 @@ class TeradekPrismInstance extends InstanceBase {
 				try {
 					if (topic) {
 						this.handleMqttMessage(topic, message ? message.toString() : '')
-						console.log('Topic: ' + topic.toString())
-						console.log('Message' + message.toString())
+						//console.log('Topic: ' + topic.toString())
+						//console.log('Message' + message.toString())
 					}
 				} catch (e) {
 					this.log('error', `Handle message failed: ${e.toString()}`)
@@ -176,15 +176,17 @@ class TeradekPrismInstance extends InstanceBase {
 		this.subscribeToTopic(this.streamPrefix + '/Info', '{}')
 		this.subscribeToTopic('Session/0/VideoEncoder', '{}')
 		this.subscribeToTopic('Session/0/AudioEncoder', '{}')
+		this.subscribeToTopic('Input/Video/Info', '{}')
+		this.subscribeToTopic('Network/Info', '{}')
+		this.subscribeToTopic('Session/0/Stream/0/Info/stream/0', '{}')
 	}
 
 	handleMqttMessage(topic, message) {
 		try {
 			message = JSON.parse(message)
-			console.log(message)
 			switch (topic) {
 				case 'System/Product':
-					this.data.deviceName = message['name']
+					this.data.deviceName = message.name
 					break
 				case this.recPrefix + '/Info':
 					this.data.recordingState = message['State']
@@ -198,22 +200,53 @@ class TeradekPrismInstance extends InstanceBase {
 					}
 					break
 				case this.streamPrefix + '/Info':
-					console.log(message)
 					this.data.streamingState = message['State']
 					this.data.streamingUptime = message['Uptime']
 					if (message['State Details']) {
 						this.log('info', message['State Details'])
 					}
 					break
+				case 'Session/0/VideoEncoder':
+					break
+				case 'Session/0/AudioEncoder':
+					break
+				case 'Input/Video/Info':
+					this.data.inputVideo = {
+						format: message.Format,
+						resolution: message.Resolution,
+						framerate: message.Framerate,
+					}
+					this.setVariableValues({
+						input_format: message.Format,
+						input_resolution: message.Resolution,
+						input_framerate: message.Framerate,
+					})
+					break
+				case 'Network/Info':
+					console.log(message)
+					this.data.network = {
+						networkInterface: message['Interface Name'],
+						networkIp: message['IP Address'],
+						networkStatus: message.Status,
+					}
+					this.setVariableValues({
+						network_interface: message['Interface Name'],
+						network_ip: message['IP Address'],
+						network_status: message.Status,
+					})
+					break
+				case 'Session/0/Stream/0/Info/stream/0':
+					//console.log(message)
+					break
 				default:
+					console.log(message)
 					break
 			}
 
 			this.checkFeedbacks()
 			this.checkVariables()
 		} catch (error) {
-			console.log(message)
-			this.log('error', `Unable to parse incoming message from device.`)
+			this.log('debug', `Unable to parse incoming message from device.`)
 		}
 	}
 
@@ -230,10 +263,9 @@ class TeradekPrismInstance extends InstanceBase {
 
 	publishMessage(topic, payload, qos, retain) {
 		this.log('debug', 'Sending MQTT message', [topic, payload])
-		console.log('Sending MQTT message', [topic, payload])
 
 		this.mqttClient.publish(topic, payload, { qos: qos, retain: retain }, function (err) {
-			//console.log(err);
+			this.log('debug', err)
 		})
 	}
 
