@@ -34,7 +34,7 @@ export function getFeedbacks() {
 		callback: (feedback) => {
 			let opt = feedback.options
 
-			if (this.data.recordingState === opt.option) {
+			if (this.data?.recording?.state === opt.option) {
 				return true
 			}
 
@@ -65,7 +65,7 @@ export function getFeedbacks() {
 		callback: (feedback) => {
 			let opt = feedback.options
 
-			if (this.data.streamingState === opt.option) {
+			if (this.data?.streaming?.state === opt.option) {
 				return true
 			}
 

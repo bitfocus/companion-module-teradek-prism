@@ -16,14 +16,11 @@ class TeradekPrismInstance extends InstanceBase {
 
 		this.data = {
 			deviceName: '',
-			recordingState: 'Unknown',
-			recordingPercentUsed: 'Unknown %',
-			recordingSize: 'Unknown G',
-			recordingUsed: 'Unknown G',
-			recordingAvailable: 'Unknown G',
-			recordingUptime: '00:00:00',
-			streamingState: 'Unknown',
-			streamingUptime: '00:00:00',
+			streaming: {},
+			recording: { active: false },
+			network: {},
+			encoder: {},
+			service: {},
 		}
 	}
 
@@ -80,7 +77,9 @@ class TeradekPrismInstance extends InstanceBase {
 	}
 
 	async destroy() {
-		this.mqttClient.end()
+		if (this.mqttClient) {
+			this.mqttClient.end()
+		}
 	}
 
 	initVariables() {
@@ -103,21 +102,11 @@ class TeradekPrismInstance extends InstanceBase {
 		this.setActionDefinitions(actions)
 	}
 
-	checkVariables() {
-		this.setVariableValues({
-			device_name: this.data.deviceName,
-			recording_state: this.data.recordingState,
-			recording_percent: this.data.recordingPercentUsed,
-			recording_size: this.data.recordingSize,
-			recording_used: this.data.recordingUsed,
-			recording_available: this.data.recordingAvailable,
-			recording_uptime: this.data.recordingUptime,
-			streaming_state: this.data.streamingState,
-			streaming_uptime: this.data.streamingUptime,
-		})
-	}
-
 	initMqtt() {
+		if (this.mqttClient) {
+			this.mqttClient.end()
+		}
+
 		if (this.config.host) {
 			const brokerUrl = `ws://${this.config.host}/mqtt`
 
@@ -170,15 +159,17 @@ class TeradekPrismInstance extends InstanceBase {
 	}
 
 	initialSubscribe() {
-		//this.subscribeToTopic('#', '{}');
+		//this.subscribeToTopic('#', '{}')
 		this.subscribeToTopic('System/Product', '{}')
+		this.subscribeToTopic(this.recPrefix, '{}')
 		this.subscribeToTopic(this.recPrefix + '/Info', '{}')
 		this.subscribeToTopic(this.streamPrefix + '/Info', '{}')
+		this.subscribeToTopic('Session/0/Stream/0/Info/stream/0', '{}')
 		this.subscribeToTopic('Session/0/VideoEncoder', '{}')
 		this.subscribeToTopic('Session/0/AudioEncoder', '{}')
 		this.subscribeToTopic('Input/Video/Info', '{}')
 		this.subscribeToTopic('Network/Info', '{}')
-		this.subscribeToTopic('Session/0/Stream/0/Info/stream/0', '{}')
+		this.subscribeToTopic(this.streamPrefix, '{}')
 	}
 
 	handleMqttMessage(topic, message) {
@@ -187,24 +178,61 @@ class TeradekPrismInstance extends InstanceBase {
 			switch (topic) {
 				case 'System/Product':
 					this.data.deviceName = message.name
+					this.setVariableValues({
+						device_name: this.data.deviceName,
+					})
+					break
+				case this.recPrefix:
+					if (this.data.recording.active === false && message.mode !== 'Disabled') {
+						this.data.recording.active = true
+						this.initVariables()
+						this.initPresets()
+					} else {
+						this.data.recording.active = false
+						this.initVariables()
+						this.initPresets()
+					}
 					break
 				case this.recPrefix + '/Info':
-					this.data.recordingState = message['State']
-					this.data.recordingPercentUsed = message['Percent Used']
-					this.data.recordingSize = message['Size']
-					this.data.recordingUsed = message['Used']
-					this.data.recordingAvailable = message['Available']
-					this.data.recordingUptime = message['Uptime']
+					this.data.recording = {
+						active: true,
+						state: message.State,
+						percentUsed: message['Percent Used'],
+						size: message.Size,
+						used: message.Used,
+						available: message.Available,
+						uptime: message.Uptime,
+					}
+
 					if (message['State Details']) {
 						this.log('info', message['State Details'])
 					}
+
+					this.setVariableValues({
+						recording_state: message.State,
+						recording_percent: message['Percent Used'],
+						recording_size: message.Size,
+						recording_used: message.Used,
+						recording_available: message.Available,
+						recording_uptime: message.Uptime,
+					})
+					this.checkFeedbacks('recordingState')
 					break
 				case this.streamPrefix + '/Info':
-					this.data.streamingState = message['State']
-					this.data.streamingUptime = message['Uptime']
+					this.data.streaming = {
+						state: message.State,
+						uptime: message.Uptime,
+					}
+
 					if (message['State Details']) {
 						this.log('info', message['State Details'])
 					}
+
+					this.setVariableValues({
+						streaming_state: message.State,
+						streaming_uptime: message.Uptime,
+					})
+					this.checkFeedbacks('streamingState')
 					break
 				case 'Session/0/VideoEncoder':
 					break
@@ -223,11 +251,10 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'Network/Info':
-					console.log(message)
 					this.data.network = {
-						networkInterface: message['Interface Name'],
-						networkIp: message['IP Address'],
-						networkStatus: message.Status,
+						interface: message['Interface Name'],
+						ip: message['IP Address'],
+						status: message.Status,
 					}
 					this.setVariableValues({
 						network_interface: message['Interface Name'],
@@ -236,15 +263,34 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'Session/0/Stream/0/Info/stream/0':
-					//console.log(message)
+					let bitrate = message.Bitrate ? (message.Bitrate * 0.001).toFixed(2) : 0
+
+					this.data.encoder = {
+						format: message.Format,
+						profile: message.Profile,
+						bitrate: bitrate,
+						codec: message.Codec,
+					}
+					this.data.streaming.service = message.Codec === 'H.265' ? this.data.service.hevc : this.data.service.h264
+					this.setVariableValues({
+						encoder_format: message.Format,
+						encoder_profile: message.Profile,
+						encoder_bitrate: `${bitrate} Kbps`,
+						encoder_codec: message.Codec,
+						streaming_service: this.data.streaming.service,
+					})
+					break
+				case 'Session/0/Stream/0':
+					this.data.service = {
+						hevc: message['mode-hevc'],
+						h264: message['mode-h264'],
+					}
 					break
 				default:
-					console.log(message)
+					//console.log(topic)
+					//console.log(message)
 					break
 			}
-
-			this.checkFeedbacks()
-			this.checkVariables()
 		} catch (error) {
 			this.log('debug', `Unable to parse incoming message from device.`)
 		}
@@ -253,7 +299,7 @@ class TeradekPrismInstance extends InstanceBase {
 	subscribeToTopic(topic, data) {
 		this.mqttClient.subscribe(topic, (err) => {
 			if (!err) {
-				this.log('debug', `Successfully subscribed to topic: ${topic}`)
+				//this.log('debug', `Successfully subscribed to topic: ${topic}`)
 				return
 			}
 
@@ -264,8 +310,11 @@ class TeradekPrismInstance extends InstanceBase {
 	publishMessage(topic, payload, qos, retain) {
 		this.log('debug', 'Sending MQTT message', [topic, payload])
 
-		this.mqttClient.publish(topic, payload, { qos: qos, retain: retain }, function (err) {
-			this.log('debug', err)
+		this.mqttClient.publish(topic, payload, { qos: qos, retain: retain }, (err) => {
+			if (!err) {
+				this.log('debug', `${err}`)
+				return
+			}
 		})
 	}
 

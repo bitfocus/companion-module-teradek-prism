@@ -1,45 +1,22 @@
 ## Teradek Prism
 
+**Basic Configuration**
+
+- In the configuration page for the Mitti module in Companion, enter the IP address of the Teradek Prism or Prism Flex
+- Enter the username and password for the Prism. _Note: while there may not be a username field on some Prism devices the username of "admin" is still required._
+
 ## Actions
-
-It is recommended to use the presets as much as possible as there are a lot of actions, variables, and feedbacks that work together.
-
-The actions are separated into the following categories:
 
 **Recording**
 
-- Start/Stop
-
-**Setting Fie Name**
-
-- File name for next recording
-
-**Record With Name**
-_This action sets the fie name and triggers record_
-
--File name for this recording
-
-**Setting Stream Info**
-_Settings currently only work for RTMP mode_
-
-- Stream Name
-- Username
-- Password
-- Stream URL
-- Stream Key
+- Recording Control
+- Set Recording Name
+- Record With Name
 
 **Streaming**
 
-_Depending on your streaming platform, you may need to determine which of these actions will control your stream. The default is Publish/Unpublish._
-
-- Publish
-- Unpublish
-- Broadcast
-- Halt
-- Cancel
-- Preview
-- End Preview
-- Complete
+- Streaming Control
+- Set RTMP Streaming Info
 
 ## Variables
 
@@ -52,17 +29,28 @@ _Depending on your streaming platform, you may need to determine which of these 
 - Recording Uptime
 - Streaming State
 - Streaming Uptime
+- Streaming Service
+- Input Format
+- Input Resolution
+- Input Framerate
+- Current Network Interface
+- Network IP Address
+- Network Status
+- Encoder Format
+- Encoder Profile
+- Encoder Bitrate (Kbps)
+- Encoder Codec
 
 ## Feedbacks
 
-- Device Recording State
+- Recording State
   - Recording
   - Ready
   - Invalid
   - Not Ready
   - Preparing
   - Offline
-- Device Streaming State
+- Streaming State
   - Live
   - Ready
   - Playing
