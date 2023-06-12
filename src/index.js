@@ -312,7 +312,7 @@ class TeradekPrismInstance extends InstanceBase {
 
 		this.mqttClient.publish(topic, payload, { qos: qos, retain: retain }, (err) => {
 			if (!err) {
-				this.log('debug', `${err}`)
+				//this.log('debug', `${err}`)
 				return
 			}
 		})
