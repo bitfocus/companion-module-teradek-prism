@@ -20,7 +20,7 @@ export function getFeedbacks() {
 				type: 'dropdown',
 				label: 'State',
 				id: 'option',
-				default: 'recording',
+				default: 'Recording',
 				choices: [
 					{ id: 'Recording', label: 'Recording' },
 					{ id: 'Ready', label: 'Ready' },
@@ -53,7 +53,7 @@ export function getFeedbacks() {
 				type: 'dropdown',
 				label: 'State',
 				id: 'option',
-				default: 'broadcasting',
+				default: 'Live',
 				choices: [
 					{ id: 'Live', label: 'Live' },
 					{ id: 'Ready', label: 'Ready' },

@@ -283,7 +283,7 @@ export function getPresets() {
 		name: 'Streaming Start/Publish',
 		options: {},
 		style: {
-			text: 'STREAM\\nSTART',
+			text: 'START\\nSTREAM',
 			size: '14',
 			color: ColorWhite,
 			bgcolor: ColorBlack,
@@ -301,44 +301,7 @@ export function getPresets() {
 				up: [],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Ready',
-				},
-				style: {
-					bgcolor: ColorGreen,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Invalid',
-				},
-				style: {
-					bgcolor: ColorYellow,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Playing',
-				},
-				style: {
-					bgcolor: ColorBlue,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Live',
-				},
-				style: {
-					bgcolor: ColorRed,
-				},
-			},
-		],
+		feedbacks: [],
 	}
 
 	presets.streamingStop = {
@@ -347,7 +310,7 @@ export function getPresets() {
 		name: 'Streaming Stop/Unpublish',
 		options: {},
 		style: {
-			text: 'STREAM\\nSTOP',
+			text: 'STOP\\nSTREAM',
 			size: '14',
 			color: ColorWhite,
 			bgcolor: ColorBlack,
@@ -365,44 +328,7 @@ export function getPresets() {
 				up: [],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Ready',
-				},
-				style: {
-					bgcolor: ColorGreen,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Invalid',
-				},
-				style: {
-					bgcolor: ColorYellow,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Playing',
-				},
-				style: {
-					bgcolor: ColorBlue,
-				},
-			},
-			{
-				feedbackId: 'streamingState',
-				options: {
-					option: 'Live',
-				},
-				style: {
-					bgcolor: ColorRed,
-				},
-			},
-		],
+		feedbacks: [],
 	}
 
 	presets.streamingState = {
@@ -469,7 +395,7 @@ export function getPresets() {
 		options: {},
 		style: {
 			text: '$(teradek-prism:streaming_uptime)',
-			size: '14',
+			size: 'auto',
 			color: ColorWhite,
 			bgcolor: ColorBlack,
 		},

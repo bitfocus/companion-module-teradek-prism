@@ -15,6 +15,8 @@ export function getVariables() {
 	variables.push({ variableId: 'streaming_state', name: 'Streaming state' })
 	variables.push({ variableId: 'streaming_uptime', name: 'Streaming uptime' })
 	variables.push({ variableId: 'streaming_service', name: 'Streaming service' })
+	variables.push({ variableId: 'stream_url', name: 'Stream URL' })
+	variables.push({ variableId: 'stream_name', name: 'Stream name' })
 
 	variables.push({ variableId: 'input_format', name: 'Video input format' })
 	variables.push({ variableId: 'input_resolution', name: 'Video input resolution' })

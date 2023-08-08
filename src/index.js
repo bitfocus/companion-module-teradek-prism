@@ -162,17 +162,20 @@ class TeradekPrismInstance extends InstanceBase {
 		//this.subscribeToTopic('#', '{}')
 		this.subscribeToTopic('System/Product', '{}')
 		this.subscribeToTopic(this.recPrefix, '{}')
-		this.subscribeToTopic(this.recPrefix + '/Info', '{}')
-		this.subscribeToTopic(this.streamPrefix + '/Info', '{}')
-		this.subscribeToTopic('Session/0/Stream/0/Info/stream/0', '{}')
+		this.subscribeToTopic(`${this.recPrefix}/Info`, '{}')
+		this.subscribeToTopic(this.streamPrefix, '{}')
+		this.subscribeToTopic(`${this.streamPrefix}/Info`, '{}')
+		this.subscribeToTopic(`${this.streamPrefix}/RTMP`, '{}')
+		this.subscribeToTopic(`${this.streamPrefix}/Info/stream/stream_identity_0`, '{}')
 		this.subscribeToTopic('Session/0/VideoEncoder', '{}')
 		this.subscribeToTopic('Session/0/AudioEncoder', '{}')
 		this.subscribeToTopic('Input/Video/Info', '{}')
 		this.subscribeToTopic('Network/Info', '{}')
-		this.subscribeToTopic(this.streamPrefix, '{}')
 	}
 
 	handleMqttMessage(topic, message) {
+		//console.log(topic)
+		//console.log(message)
 		try {
 			message = JSON.parse(message)
 			switch (topic) {
@@ -262,8 +265,8 @@ class TeradekPrismInstance extends InstanceBase {
 						network_status: message.Status,
 					})
 					break
-				case 'Session/0/Stream/0/Info/stream/0':
-					let bitrate = message.Bitrate ? (message.Bitrate * 0.001).toFixed(2) : 0
+				case 'Session/0/Stream/0/Info/stream/stream_identity_0':
+					let bitrate = message.Bitrate ? (message.Bitrate / 100000).toFixed(2) : 0
 
 					this.data.encoder = {
 						format: message.Format,
@@ -275,7 +278,7 @@ class TeradekPrismInstance extends InstanceBase {
 					this.setVariableValues({
 						encoder_format: message.Format,
 						encoder_profile: message.Profile,
-						encoder_bitrate: `${bitrate} Kbps`,
+						encoder_bitrate: `${bitrate} Mbps`,
 						encoder_codec: message.Codec,
 						streaming_service: this.data.streaming.service,
 					})
@@ -285,6 +288,17 @@ class TeradekPrismInstance extends InstanceBase {
 						hevc: message['mode-hevc'],
 						h264: message['mode-h264'],
 					}
+					break
+
+				case 'Session/0/Stream/0/RTMP':
+					this.data.rtmp = {
+						url: message.url,
+						stream: message.stream,
+					}
+					this.setVariableValues({
+						stream_url: message.url,
+						stream_name: message.stream,
+					})
 					break
 				default:
 					//console.log(topic)
