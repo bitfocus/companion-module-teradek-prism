@@ -3,7 +3,7 @@
 	"name": "teradek-prism",
 	"shortname": "prism",
 	"description": "Companion module for Teradek Prism and Prism Flex",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-teradek-prism.git",
 	"bugs": "https://github.com/bitfocus/companion-module-teradek-prism/issues",
@@ -11,6 +11,10 @@
 		{
 			"name": "Michael Larsen",
 			"email": "michael.larsen91@gmail.com"
+		},
+		{
+			"name": "Bryce Seifert",
+			"email": "bryceapps@icloud.com"
 		}
 	],
 	"legacyIds": ["teradek-prismflex"],
