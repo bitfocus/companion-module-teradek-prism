@@ -58,6 +58,7 @@ class TeradekPrismInstance extends InstanceBase {
 				label: 'Username',
 				default: 'admin',
 				width: 4,
+				tooltip: 'If there is not a username field on your Prism device, the username of "admin" is still required.',
 			},
 			{
 				type: 'textinput',
