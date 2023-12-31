@@ -249,7 +249,6 @@ class TeradekPrismInstance extends InstanceBase {
 				case 'Session/0/AudioEncoder':
 					break
 				case 'Input/Video/Info':
-					console.log(message)
 					this.data.inputVideo = {
 						format: message.Format,
 						resolution: message.Resolution,
@@ -276,7 +275,7 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'Session/0/Stream/0/Info/stream/stream_identity_0':
-					let bitrate = message.Bitrate ? (message.Bitrate / 100000).toFixed(2) : 0
+					let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
 					this.data.encoder = {
 						format: message.Format,
@@ -288,7 +287,7 @@ class TeradekPrismInstance extends InstanceBase {
 					this.setVariableValues({
 						encoder_format: message.Format,
 						encoder_profile: message.Profile,
-						encoder_bitrate: `${bitrate} Mbps`,
+						encoder_bitrate: bitrate,
 						encoder_codec: message.Codec,
 						streaming_service: this.data.streaming.service,
 					})
@@ -347,6 +346,30 @@ class TeradekPrismInstance extends InstanceBase {
 
 		this.subscribeToTopic(topic + '/+', {})
 		this.publishMessage(topic, JSON.stringify(payload), 2, true)
+	}
+
+	bitsToDisplayValue(bits) {
+		let precision = 2
+		let removeUnitLabel = false
+
+		let kilobits = 1000
+		let megabits = kilobits * 1000
+		let gigabits = megabits * 1000
+		let terabits = gigabits * 1000
+
+		if (bits >= 0 && bits < kilobits) {
+			return removeUnitLabel ? bits : bits + ' bps'
+		} else if (bits >= kilobits && bits < megabits) {
+			return removeUnitLabel ? (bits / kilobits).toFixed(precision) : (bits / kilobits).toFixed(precision) + ' Kbps'
+		} else if (bits >= megabits && bits < gigabits) {
+			return removeUnitLabel ? (bits / megabits).toFixed(precision) : (bits / megabits).toFixed(precision) + ' Mbps'
+		} else if (bits >= gigabits && bits < terabits) {
+			return removeUnitLabel ? (bits / gigabits).toFixed(precision) : (bits / gigabits).toFixed(precision) + ' Gbps'
+		} else if (bits >= terabits) {
+			return removeUnitLabel ? (bits / gigabits).toFixed(precision) : (bits / gigabits).toFixed(precision) + ' Tbps'
+		} else {
+			return removeUnitLabel ? bits : bits + ' bps'
+		}
 	}
 }
 

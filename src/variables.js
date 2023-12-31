@@ -29,7 +29,7 @@ export function getVariables() {
 
 	variables.push({ variableId: 'encoder_format', name: 'Encoder format' })
 	variables.push({ variableId: 'encoder_profile', name: 'Encoder profile' })
-	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate (Kbps)' })
+	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate' })
 	variables.push({ variableId: 'encoder_codec', name: 'Encoder codec' })
 
 	return variables
