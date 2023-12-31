@@ -4,7 +4,7 @@ import { getPresets } from './presets.js'
 import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
 
-import * as mqtt from 'mqtt'
+import mqtt from 'mqtt'
 
 class TeradekPrismInstance extends InstanceBase {
 	constructor(internal) {
