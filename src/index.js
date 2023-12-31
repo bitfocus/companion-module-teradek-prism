@@ -1,4 +1,4 @@
-import { InstanceBase, Regex, runEntrypoint } from '@companion-module/base'
+import { InstanceBase, runEntrypoint, InstanceStatus } from '@companion-module/base'
 import { getActions } from './actions.js'
 import { getPresets } from './presets.js'
 import { getVariables } from './variables.js'
@@ -27,7 +27,7 @@ class TeradekPrismInstance extends InstanceBase {
 	async init(config) {
 		this.config = config
 
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.initMqtt()
 
 		this.initActions()
@@ -72,7 +72,7 @@ class TeradekPrismInstance extends InstanceBase {
 	async configUpdated(config) {
 		this.config = config
 
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.init(config)
 	}
 
@@ -116,13 +116,13 @@ class TeradekPrismInstance extends InstanceBase {
 			})
 
 			this.mqttClient.on('connect', () => {
-				this.updateStatus('ok')
+				this.updateStatus(InstanceStatus.Ok)
 
 				this.initialSubscribe()
 			})
 
 			this.mqttClient.on('error', (err) => {
-				this.updateStatus('connection_failure')
+				this.updateStatus(InstanceStatus.ConnectionFailure)
 				let showSpecific = false
 				Object.keys(err).forEach(function (key) {
 					if (key === 'code') {
@@ -141,7 +141,7 @@ class TeradekPrismInstance extends InstanceBase {
 			})
 
 			this.mqttClient.on('offline', () => {
-				this.updateStatus('disconnected')
+				this.updateStatus(InstanceStatus.Disconnected)
 			})
 
 			this.mqttClient.on('message', (topic, message) => {
@@ -160,17 +160,24 @@ class TeradekPrismInstance extends InstanceBase {
 
 	initialSubscribe() {
 		//this.subscribeToTopic('#', '{}')
-		this.subscribeToTopic('System/Product', '{}')
-		this.subscribeToTopic(this.recPrefix, '{}')
-		this.subscribeToTopic(`${this.recPrefix}/Info`, '{}')
-		this.subscribeToTopic(this.streamPrefix, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/Info`, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/RTMP`, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/Info/stream/stream_identity_0`, '{}')
-		this.subscribeToTopic('Session/0/VideoEncoder', '{}')
-		this.subscribeToTopic('Session/0/AudioEncoder', '{}')
-		this.subscribeToTopic('Input/Video/Info', '{}')
-		this.subscribeToTopic('Network/Info', '{}')
+
+		let initialRequests = [
+			'System/Product',
+			this.recPrefix,
+			`${this.recPrefix}/Info`,
+			this.streamPrefix,
+			`${this.streamPrefix}/Info`,
+			`${this.streamPrefix}/RTMP`,
+			`${this.streamPrefix}/Info/stream/stream_identity_0`,
+			'Session/0/VideoEncoder',
+			'Session/0/AudioEncoder',
+			'Input/Video/Info',
+			'Network/Info',
+		]
+
+		initialRequests.forEach((topic) => {
+			this.subscribeToTopic(topic, '{}')
+		})
 	}
 
 	handleMqttMessage(topic, message) {
@@ -242,15 +249,18 @@ class TeradekPrismInstance extends InstanceBase {
 				case 'Session/0/AudioEncoder':
 					break
 				case 'Input/Video/Info':
+					console.log(message)
 					this.data.inputVideo = {
 						format: message.Format,
 						resolution: message.Resolution,
 						framerate: message.Framerate,
+						source: message.Source,
 					}
 					this.setVariableValues({
 						input_format: message.Format,
 						input_resolution: message.Resolution,
 						input_framerate: message.Framerate,
+						input_source: message.Source,
 					})
 					break
 				case 'Network/Info':
@@ -306,14 +316,14 @@ class TeradekPrismInstance extends InstanceBase {
 					break
 			}
 		} catch (error) {
-			this.log('debug', `Unable to parse incoming message from device.`)
+			this.log('debug', `Unable to parse incoming message from device: ${topic} - ${message}`)
 		}
 	}
 
 	subscribeToTopic(topic, data) {
 		this.mqttClient.subscribe(topic, (err) => {
 			if (!err) {
-				//this.log('debug', `Successfully subscribed to topic: ${topic}`)
+				this.log('debug', `Successfully subscribed to topic: ${topic}`)
 				return
 			}
 
