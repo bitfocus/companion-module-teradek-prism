@@ -21,6 +21,7 @@ export function getVariables() {
 	variables.push({ variableId: 'input_format', name: 'Video input format' })
 	variables.push({ variableId: 'input_resolution', name: 'Video input resolution' })
 	variables.push({ variableId: 'input_framerate', name: 'Video input framerate' })
+	variables.push({ variableId: 'input_source', name: 'Video input source' })
 
 	variables.push({ variableId: 'network_interface', name: 'Current network interface' })
 	variables.push({ variableId: 'network_ip', name: 'Network IP address' })
@@ -28,7 +29,7 @@ export function getVariables() {
 
 	variables.push({ variableId: 'encoder_format', name: 'Encoder format' })
 	variables.push({ variableId: 'encoder_profile', name: 'Encoder profile' })
-	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate (Kbps)' })
+	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate' })
 	variables.push({ variableId: 'encoder_codec', name: 'Encoder codec' })
 
 	return variables

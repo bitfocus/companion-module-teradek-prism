@@ -1,10 +1,10 @@
-import { InstanceBase, Regex, runEntrypoint } from '@companion-module/base'
+import { InstanceBase, runEntrypoint, InstanceStatus } from '@companion-module/base'
 import { getActions } from './actions.js'
 import { getPresets } from './presets.js'
 import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
 
-import * as mqtt from 'mqtt'
+import mqtt from 'mqtt'
 
 class TeradekPrismInstance extends InstanceBase {
 	constructor(internal) {
@@ -27,7 +27,7 @@ class TeradekPrismInstance extends InstanceBase {
 	async init(config) {
 		this.config = config
 
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.initMqtt()
 
 		this.initActions()
@@ -58,6 +58,7 @@ class TeradekPrismInstance extends InstanceBase {
 				label: 'Username',
 				default: 'admin',
 				width: 4,
+				tooltip: 'If there is not a username field on your Prism device, the username of "admin" is still required.',
 			},
 			{
 				type: 'textinput',
@@ -72,7 +73,7 @@ class TeradekPrismInstance extends InstanceBase {
 	async configUpdated(config) {
 		this.config = config
 
-		this.updateStatus('connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 		this.init(config)
 	}
 
@@ -116,13 +117,13 @@ class TeradekPrismInstance extends InstanceBase {
 			})
 
 			this.mqttClient.on('connect', () => {
-				this.updateStatus('ok')
+				this.updateStatus(InstanceStatus.Ok)
 
 				this.initialSubscribe()
 			})
 
 			this.mqttClient.on('error', (err) => {
-				this.updateStatus('connection_failure')
+				this.updateStatus(InstanceStatus.ConnectionFailure)
 				let showSpecific = false
 				Object.keys(err).forEach(function (key) {
 					if (key === 'code') {
@@ -141,7 +142,7 @@ class TeradekPrismInstance extends InstanceBase {
 			})
 
 			this.mqttClient.on('offline', () => {
-				this.updateStatus('disconnected')
+				this.updateStatus(InstanceStatus.Disconnected)
 			})
 
 			this.mqttClient.on('message', (topic, message) => {
@@ -160,17 +161,24 @@ class TeradekPrismInstance extends InstanceBase {
 
 	initialSubscribe() {
 		//this.subscribeToTopic('#', '{}')
-		this.subscribeToTopic('System/Product', '{}')
-		this.subscribeToTopic(this.recPrefix, '{}')
-		this.subscribeToTopic(`${this.recPrefix}/Info`, '{}')
-		this.subscribeToTopic(this.streamPrefix, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/Info`, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/RTMP`, '{}')
-		this.subscribeToTopic(`${this.streamPrefix}/Info/stream/stream_identity_0`, '{}')
-		this.subscribeToTopic('Session/0/VideoEncoder', '{}')
-		this.subscribeToTopic('Session/0/AudioEncoder', '{}')
-		this.subscribeToTopic('Input/Video/Info', '{}')
-		this.subscribeToTopic('Network/Info', '{}')
+
+		let initialRequests = [
+			'System/Product',
+			this.recPrefix,
+			`${this.recPrefix}/Info`,
+			this.streamPrefix,
+			`${this.streamPrefix}/Info`,
+			`${this.streamPrefix}/RTMP`,
+			`${this.streamPrefix}/Info/stream/stream_identity_0`,
+			'Session/0/VideoEncoder',
+			'Session/0/AudioEncoder',
+			'Input/Video/Info',
+			'Network/Info',
+		]
+
+		initialRequests.forEach((topic) => {
+			this.subscribeToTopic(topic, '{}')
+		})
 	}
 
 	handleMqttMessage(topic, message) {
@@ -246,11 +254,13 @@ class TeradekPrismInstance extends InstanceBase {
 						format: message.Format,
 						resolution: message.Resolution,
 						framerate: message.Framerate,
+						source: message.Source,
 					}
 					this.setVariableValues({
 						input_format: message.Format,
 						input_resolution: message.Resolution,
 						input_framerate: message.Framerate,
+						input_source: message.Source,
 					})
 					break
 				case 'Network/Info':
@@ -266,7 +276,7 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'Session/0/Stream/0/Info/stream/stream_identity_0':
-					let bitrate = message.Bitrate ? (message.Bitrate / 100000).toFixed(2) : 0
+					let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
 					this.data.encoder = {
 						format: message.Format,
@@ -278,7 +288,7 @@ class TeradekPrismInstance extends InstanceBase {
 					this.setVariableValues({
 						encoder_format: message.Format,
 						encoder_profile: message.Profile,
-						encoder_bitrate: `${bitrate} Mbps`,
+						encoder_bitrate: bitrate,
 						encoder_codec: message.Codec,
 						streaming_service: this.data.streaming.service,
 					})
@@ -306,14 +316,14 @@ class TeradekPrismInstance extends InstanceBase {
 					break
 			}
 		} catch (error) {
-			this.log('debug', `Unable to parse incoming message from device.`)
+			this.log('debug', `Unable to parse incoming message from device: ${topic} - ${message}`)
 		}
 	}
 
 	subscribeToTopic(topic, data) {
 		this.mqttClient.subscribe(topic, (err) => {
 			if (!err) {
-				//this.log('debug', `Successfully subscribed to topic: ${topic}`)
+				this.log('debug', `Successfully subscribed to topic: ${topic}`)
 				return
 			}
 
@@ -337,6 +347,30 @@ class TeradekPrismInstance extends InstanceBase {
 
 		this.subscribeToTopic(topic + '/+', {})
 		this.publishMessage(topic, JSON.stringify(payload), 2, true)
+	}
+
+	bitsToDisplayValue(bits) {
+		let precision = 2
+		let removeUnitLabel = false
+
+		let kilobits = 1000
+		let megabits = kilobits * 1000
+		let gigabits = megabits * 1000
+		let terabits = gigabits * 1000
+
+		if (bits >= 0 && bits < kilobits) {
+			return removeUnitLabel ? bits : bits + ' bps'
+		} else if (bits >= kilobits && bits < megabits) {
+			return removeUnitLabel ? (bits / kilobits).toFixed(precision) : (bits / kilobits).toFixed(precision) + ' Kbps'
+		} else if (bits >= megabits && bits < gigabits) {
+			return removeUnitLabel ? (bits / megabits).toFixed(precision) : (bits / megabits).toFixed(precision) + ' Mbps'
+		} else if (bits >= gigabits && bits < terabits) {
+			return removeUnitLabel ? (bits / gigabits).toFixed(precision) : (bits / gigabits).toFixed(precision) + ' Gbps'
+		} else if (bits >= terabits) {
+			return removeUnitLabel ? (bits / gigabits).toFixed(precision) : (bits / gigabits).toFixed(precision) + ' Tbps'
+		} else {
+			return removeUnitLabel ? bits : bits + ' bps'
+		}
 	}
 }
 

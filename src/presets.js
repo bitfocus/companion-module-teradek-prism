@@ -185,7 +185,7 @@ export function getPresets() {
 			name: 'Recording State',
 			options: {},
 			style: {
-				text: '$(teradek-prism:recording_state)',
+				text: '$(prism:recording_state)',
 				size: '14',
 				color: ColorWhite,
 				bgcolor: ColorBlack,
@@ -260,7 +260,7 @@ export function getPresets() {
 			name: 'Recording Uptime',
 			options: {},
 			style: {
-				text: '$(teradek-prism:recording_uptime)',
+				text: '$(prism:recording_uptime)',
 				size: '14',
 				color: ColorWhite,
 				bgcolor: ColorBlack,
@@ -337,7 +337,7 @@ export function getPresets() {
 		name: 'Streaming State',
 		options: {},
 		style: {
-			text: '$(teradek-prism:streaming_state)',
+			text: '$(prism:streaming_state)',
 			size: '14',
 			color: ColorWhite,
 			bgcolor: ColorBlack,
@@ -394,7 +394,130 @@ export function getPresets() {
 		name: 'Streaming Uptime',
 		options: {},
 		style: {
-			text: '$(teradek-prism:streaming_uptime)',
+			text: '$(prism:streaming_uptime)',
+			size: 'auto',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets.streamingDestination = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Stream Destination',
+		options: {},
+		style: {
+			text: 'Stream Dest:\\n$(prism:streaming_service)',
+			size: 'auto',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets.streamingName = {
+		type: 'button',
+		category: 'Streaming',
+		name: 'Stream Name',
+		options: {},
+		style: {
+			text: 'Stream Name:\\n$(prism:stream_name)',
+			size: 'auto',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	//Encoder Presets
+
+	presets.encoderFormatBitrate = {
+		type: 'button',
+		category: 'Encoder',
+		name: 'Encoder Format/Bitrate',
+		options: {},
+		style: {
+			text: 'Encoder:\\n$(prism:encoder_format) $(prism:encoder_bitrate)',
+			size: '10',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	//Input Presets
+	presets.inputFormat = {
+		type: 'button',
+		category: 'Input',
+		name: 'Input Format',
+		options: {},
+		style: {
+			text: 'Input:\\n$(prism:input_format)',
+			size: 'auto',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets.inputSource = {
+		type: 'button',
+		category: 'Input',
+		name: 'Input Source',
+		options: {},
+		style: {
+			text: 'Input Source:\\n$(prism:input_source)',
+			size: 'auto',
+			color: ColorWhite,
+			bgcolor: ColorBlack,
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets.inputSourceFormat = {
+		type: 'button',
+		category: 'Input',
+		name: 'Input Source/Format',
+		options: {},
+		style: {
+			text: 'Input:\\n$(prism:input_source)\\n$(prism:input_format)',
 			size: 'auto',
 			color: ColorWhite,
 			bgcolor: ColorBlack,
