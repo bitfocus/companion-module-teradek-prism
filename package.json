@@ -1,6 +1,6 @@
 {
 	"name": "teradek-prism",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
@@ -12,11 +12,11 @@
 		"url": "git+https://github.com/bitfocus/companion-module-teradek-prism.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.6.0",
-		"mqtt": "^5.3.4"
+		"@companion-module/base": "~1.10.0",
+		"mqtt": "^5.10.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.4.2"
+		"@companion-module/tools": "^1.5.1"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json"
 }

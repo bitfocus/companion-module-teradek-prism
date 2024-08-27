@@ -3,7 +3,7 @@
 	"name": "teradek-prism",
 	"shortname": "prism",
 	"description": "Companion module for Teradek Prism and Prism Flex",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-teradek-prism.git",
 	"bugs": "https://github.com/bitfocus/companion-module-teradek-prism/issues",
