@@ -185,7 +185,13 @@ class TeradekPrismInstance extends InstanceBase {
 		//console.log(topic)
 		//console.log(message)
 		try {
-			message = JSON.parse(message)
+			if (message) {
+				try {
+					message = JSON.parse(message)
+				} catch (e) {
+					// Not valid JSON, leave as string
+				}
+			}
 			switch (topic) {
 				case 'System/Product':
 					this.data.deviceName = message.name
