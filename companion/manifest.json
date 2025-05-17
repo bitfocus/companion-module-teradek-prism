@@ -3,7 +3,7 @@
 	"name": "teradek-prism",
 	"shortname": "prism",
 	"description": "Companion module for Teradek Prism and Prism Flex",
-	"version": "2.0.4",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-teradek-prism.git",
 	"bugs": "https://github.com/bitfocus/companion-module-teradek-prism/issues",
@@ -19,7 +19,7 @@
 	],
 	"legacyIds": ["teradek-prismflex"],
 	"runtime": {
-		"type": "node18",
+		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
 		"entrypoint": "../src/index.js"
