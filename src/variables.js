@@ -27,6 +27,7 @@ export function getVariables() {
 	variables.push({ variableId: 'network_ip', name: 'Network IP address' })
 	variables.push({ variableId: 'network_status', name: 'Network status' })
 
+	variables.push({ variableId: 'encoder_mode', name: 'Encoder mode' })
 	variables.push({ variableId: 'encoder_format', name: 'Encoder format' })
 	variables.push({ variableId: 'encoder_profile', name: 'Encoder profile' })
 	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate' })

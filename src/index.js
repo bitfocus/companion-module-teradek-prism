@@ -11,11 +11,17 @@ class TeradekPrismInstance extends InstanceBase {
 		super(internal)
 
 		this.mqttClient = null
-		this.recPrefix = 'Session/0/Record'
-		this.streamPrefix = 'Session/0/Stream/0'
+
+		this.prefix = {
+			record: 'Session/0/Record',
+			recordLL: 'SessionLL/VideoEncoders/0/Record',
+			stream: 'Session/0/Stream/0',
+			streamLL: 'SessionLL/VideoEncoders/0/Streams/0',
+		}
 
 		this.data = {
 			deviceName: '',
+			mode: '',
 			streaming: {},
 			recording: { active: false },
 			network: {},
@@ -164,12 +170,16 @@ class TeradekPrismInstance extends InstanceBase {
 
 		let initialRequests = [
 			'System/Product',
-			this.recPrefix,
+			'Session',
+			this.prefix.record,
+			this.prefix.recordLL,
 			`${this.recPrefix}/Info`,
-			this.streamPrefix,
-			`${this.streamPrefix}/Info`,
-			`${this.streamPrefix}/RTMP`,
-			`${this.streamPrefix}/Info/stream/stream_identity_0`,
+			this.prefix.stream,
+			this.prefix.streamLL,
+			`${this.prefix.stream}/Info`,
+			`${this.prefix.streamLL}/Info`,
+			`${this.prefix.stream}/RTMP`,
+			`Session/0/VideoEncoder/Info/stream/stream_identity_0`,
 			'Session/0/VideoEncoder',
 			'Session/0/AudioEncoder',
 			'Input/Video/Info',
@@ -182,8 +192,10 @@ class TeradekPrismInstance extends InstanceBase {
 	}
 
 	handleMqttMessage(topic, message) {
-		//console.log(topic)
-		//console.log(message)
+		/* if (topic.includes('Record') || topic.includes('Stream')) {
+			console.log(topic)
+			console.log(message)
+		} */
 		try {
 			if (message) {
 				try {
@@ -199,7 +211,8 @@ class TeradekPrismInstance extends InstanceBase {
 						device_name: this.data.deviceName,
 					})
 					break
-				case this.recPrefix:
+				case this.prefix.record:
+				case this.prefix.recordLL:
 					if (this.data.recording.active === false && message.mode !== 'Disabled') {
 						this.data.recording.active = true
 						this.initVariables()
@@ -210,7 +223,8 @@ class TeradekPrismInstance extends InstanceBase {
 						this.initPresets()
 					}
 					break
-				case this.recPrefix + '/Info':
+				case this.prefix.record + '/Info':
+				case this.prefix.recordLL + '/Info':
 					this.data.recording = {
 						active: true,
 						state: message.State,
@@ -235,7 +249,8 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					this.checkFeedbacks('recordingState')
 					break
-				case this.streamPrefix + '/Info':
+				case this.prefix.stream + '/Info':
+				case this.prefix.streamLL + '/Info':
 					this.data.streaming = {
 						state: message.State,
 						uptime: message.Uptime,
@@ -250,6 +265,11 @@ class TeradekPrismInstance extends InstanceBase {
 						streaming_uptime: message.Uptime,
 					})
 					this.checkFeedbacks('streamingState')
+					break
+				case 'Session':
+					this.data.mode = message.mode
+					this.setVariableValues({ encoder_mode: message.mode })
+					this.log('debug', 'Encoder mode: ' + message.mode)
 					break
 				case 'Session/0/VideoEncoder':
 					break
@@ -281,7 +301,7 @@ class TeradekPrismInstance extends InstanceBase {
 						network_status: message.Status,
 					})
 					break
-				case 'Session/0/Stream/0/Info/stream/stream_identity_0':
+				case 'Session/0/VideoEncoder/Info/stream/stream_identity_0':
 					let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
 					this.data.encoder = {

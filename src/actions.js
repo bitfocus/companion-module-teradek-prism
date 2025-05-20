@@ -16,7 +16,10 @@ export function getActions() {
 			},
 		],
 		callback: (action) => {
-			this.sendCommand(this.recPrefix + '/' + action.options.command, {})
+			this.sendCommand(
+				`${this.data?.mode === 'Low-Latency' ? this.prefix.recordLL : this.prefix.record}/${action.options.command}`,
+				{},
+			)
 		},
 	}
 
@@ -30,7 +33,10 @@ export function getActions() {
 			},
 		],
 		callback: (action) => {
-			this.sendCommand(this.recPrefix + '/RECUpload/set', { name: action.options.command })
+			this.sendCommand(
+				`${this.data?.mode === 'Low-Latency' ? this.prefix.recordLL : this.prefix.record}/RECUpload/set`,
+				{ name: action.options.command },
+			)
 		},
 	}
 
@@ -44,8 +50,11 @@ export function getActions() {
 			},
 		],
 		callback: (action) => {
-			this.sendCommand(this.recPrefix + '/RECUpload/set', { name: action.options.command })
-			this.sendCommand(this.recPrefix + '/start', {})
+			this.sendCommand(
+				`${this.data?.mode === 'Low-Latency' ? this.prefix.recordLL : this.prefix.record}/RECUpload/set`,
+				{ name: action.options.command },
+			)
+			this.sendCommand(`${this.data?.mode === 'Low-Latency' ? this.prefix.recordLL : this.prefix.record}/start`, {})
 		},
 	}
 
@@ -79,7 +88,7 @@ export function getActions() {
 			},
 		],
 		callback: (action) => {
-			this.sendCommand(this.streamPrefix + '/RTMP/set', {
+			this.sendCommand(`${this.data?.mode === 'Low-Latency' ? this.prefix.streamLL : this.prefix.stream}/RTMP/set`, {
 				password: action.options.password,
 				channel_name: action.options.streamName,
 				username: action.options.username,
@@ -112,7 +121,10 @@ export function getActions() {
 			},
 		],
 		callback: (action) => {
-			this.sendCommand(this.streamPrefix + '/' + action.options.command, {})
+			this.sendCommand(
+				`${this.data?.mode === 'Low-Latency' ? this.prefix.streamLL : this.prefix.stream}/${action.options.command}`,
+				{},
+			)
 		},
 	}
 
