@@ -179,7 +179,9 @@ class TeradekPrismInstance extends InstanceBase {
 			`${this.prefix.stream}/Info`,
 			`${this.prefix.streamLL}/Info`,
 			`${this.prefix.stream}/RTMP`,
+			`${this.prefix.streamLL}/RTMP`,
 			`Session/0/VideoEncoder/Info/stream/stream_identity_0`,
+			'SessionLL/VideoEncoders/0/Info',
 			'Session/0/VideoEncoder',
 			'Session/0/AudioEncoder',
 			'Input/Video/Info',
@@ -301,6 +303,19 @@ class TeradekPrismInstance extends InstanceBase {
 						network_status: message.Status,
 					})
 					break
+				case 'SessionLL/VideoEncoders/0/Info':
+					console.log(message)
+					let bitrateLL = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
+
+					this.data.encoder = {
+						format: message.Format,
+						bitrate: bitrateLL,
+					}
+					this.setVariableValues({
+						encoder_format: message.Format,
+						encoder_bitrate: bitrateLL,
+					})
+					break
 				case 'Session/0/VideoEncoder/Info/stream/stream_identity_0':
 					let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
@@ -325,16 +340,29 @@ class TeradekPrismInstance extends InstanceBase {
 						h264: message['mode-h264'],
 					}
 					break
-
 				case 'Session/0/Stream/0/RTMP':
-					this.data.rtmp = {
-						url: message.url,
-						stream: message.stream,
+					if (this.data.mode === 'Normal') {
+						this.data.rtmp = {
+							url: message.url,
+							stream: message.stream,
+						}
+						this.setVariableValues({
+							stream_url: message.url,
+							stream_name: message.stream,
+						})
 					}
-					this.setVariableValues({
-						stream_url: message.url,
-						stream_name: message.stream,
-					})
+					break
+				case 'SessionLL/VideoEncoders/0/Streams/0/RTMP':
+					if (this.data.mode === 'Low-Latency') {
+						this.data.rtmp = {
+							url: message.url,
+							stream: message.stream,
+						}
+						this.setVariableValues({
+							stream_url: message.url,
+							stream_name: message.stream,
+						})
+					}
 					break
 				default:
 					//console.log(topic)
