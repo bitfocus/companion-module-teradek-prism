@@ -173,7 +173,8 @@ class TeradekPrismInstance extends InstanceBase {
 			'Session',
 			this.prefix.record,
 			this.prefix.recordLL,
-			`${this.recPrefix}/Info`,
+			`${this.prefix.record}/Info`,
+			`${this.prefix.recordLL}/Info`,
 			this.prefix.stream,
 			this.prefix.streamLL,
 			`${this.prefix.stream}/Info`,
@@ -194,10 +195,6 @@ class TeradekPrismInstance extends InstanceBase {
 	}
 
 	handleMqttMessage(topic, message) {
-		/* if (topic.includes('Record') || topic.includes('Stream')) {
-			console.log(topic)
-			console.log(message)
-		} */
 		try {
 			if (message) {
 				try {
@@ -215,7 +212,7 @@ class TeradekPrismInstance extends InstanceBase {
 					break
 				case this.prefix.record:
 				case this.prefix.recordLL:
-					if (this.data.recording.active === false && message.mode !== 'Disabled') {
+					if (message.mode !== 'Disabled') {
 						this.data.recording.active = true
 						this.initVariables()
 						this.initPresets()
@@ -304,7 +301,6 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'SessionLL/VideoEncoders/0/Info':
-					console.log(message)
 					let bitrateLL = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
 					this.data.encoder = {
