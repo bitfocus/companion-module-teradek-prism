@@ -183,6 +183,7 @@ class TeradekPrismInstance extends InstanceBase {
 			`${this.prefix.streamLL}/RTMP`,
 			`Session/0/VideoEncoder/Info/stream/stream_identity_0`,
 			'SessionLL/VideoEncoders/0/Info',
+			'SessionLL/VideoEncoders/0/Metadata',
 			'Session/0/VideoEncoder',
 			'Session/0/AudioEncoder',
 			'Input/Video/Info',
@@ -199,7 +200,7 @@ class TeradekPrismInstance extends InstanceBase {
 			if (message) {
 				try {
 					message = JSON.parse(message)
-				} catch (e) {
+				} catch {
 					// Not valid JSON, leave as string
 				}
 			}
@@ -301,34 +302,52 @@ class TeradekPrismInstance extends InstanceBase {
 					})
 					break
 				case 'SessionLL/VideoEncoders/0/Info':
-					let bitrateLL = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
+					{
+						let bitrateLL = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
-					this.data.encoder = {
-						format: message.Format,
-						bitrate: bitrateLL,
+						this.data.encoder = {
+							format: message.Format,
+							bitrate: bitrateLL,
+						}
+						this.setVariableValues({
+							encoder_format: message.Format,
+							encoder_bitrate: bitrateLL,
+						})
 					}
-					this.setVariableValues({
-						encoder_format: message.Format,
-						encoder_bitrate: bitrateLL,
-					})
+					break
+				case 'SessionLL/VideoEncoders/0/Metadata':
+					{
+						this.setVariableValues({
+							scte_splice_type: message.splice_type == 'normal' ? 'Normal' : 'Immediate',
+							scte_pre_roll: message.pre_roll,
+							scte_event_id: message.event_id,
+							scte_network_event: message.network_event == 'out-of-network' ? 'Out of Network' : 'Return to Network',
+							scte_break_duration: message.break_duration,
+							scte_program_id: message.program_id,
+							scte_avail_num: message.avail_num,
+							scte_avail_expect: message.avail_expect,
+						})
+					}
 					break
 				case 'Session/0/VideoEncoder/Info/stream/stream_identity_0':
-					let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
+					{
+						let bitrate = message.Bitrate ? this.bitsToDisplayValue(message.Bitrate) : '0'
 
-					this.data.encoder = {
-						format: message.Format,
-						profile: message.Profile,
-						bitrate: bitrate,
-						codec: message.Codec,
+						this.data.encoder = {
+							format: message.Format,
+							profile: message.Profile,
+							bitrate: bitrate,
+							codec: message.Codec,
+						}
+						this.data.streaming.service = message.Codec === 'H.265' ? this.data.service.hevc : this.data.service.h264
+						this.setVariableValues({
+							encoder_format: message.Format,
+							encoder_profile: message.Profile,
+							encoder_bitrate: bitrate,
+							encoder_codec: message.Codec,
+							streaming_service: this.data.streaming.service,
+						})
 					}
-					this.data.streaming.service = message.Codec === 'H.265' ? this.data.service.hevc : this.data.service.h264
-					this.setVariableValues({
-						encoder_format: message.Format,
-						encoder_profile: message.Profile,
-						encoder_bitrate: bitrate,
-						encoder_codec: message.Codec,
-						streaming_service: this.data.streaming.service,
-					})
 					break
 				case 'Session/0/Stream/0':
 					this.data.service = {
@@ -365,12 +384,12 @@ class TeradekPrismInstance extends InstanceBase {
 					//console.log(message)
 					break
 			}
-		} catch (error) {
+		} catch {
 			this.log('debug', `Unable to parse incoming message from device: ${topic} - ${message}`)
 		}
 	}
 
-	subscribeToTopic(topic, data) {
+	subscribeToTopic(topic, _data) {
 		this.mqttClient.subscribe(topic, (err) => {
 			if (!err) {
 				this.log('debug', `Successfully subscribed to topic: ${topic}`)

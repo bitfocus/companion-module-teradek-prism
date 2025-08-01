@@ -128,5 +128,141 @@ export function getActions() {
 		},
 	}
 
+	actions.setSCTE = {
+		name: 'Set SCTE 35 Message Settings',
+		description:
+			'Adjust selected SCTE 35 message properties. Requires firmware v2.23.20250722 or later, and a valid license.',
+		options: [
+			{
+				type: 'multidropdown',
+				label: 'Properties',
+				id: 'properties',
+				tooltip: 'Properties not selected will be left at their existing values.',
+				choices: [
+					{ id: 'splice_type', label: 'Splice Type' },
+					{ id: 'pre_roll', label: 'Pre-Roll' },
+					{ id: 'event_id', label: 'Event ID (Hex)' },
+					{ id: 'network_event', label: 'Network Event' },
+					{ id: 'break_duration', label: 'Break Duration' },
+					{ id: 'program_id', label: 'Unique Program ID' },
+					{ id: 'avail_num', label: 'Available Num' },
+					{ id: 'avail_expect', label: 'Avails Expected' },
+				],
+				default: ['break_duration'],
+			},
+			{
+				type: 'dropdown',
+				label: 'Splice Type',
+				id: 'splice_type',
+				choices: [
+					{ id: 'normal', label: 'Normal' },
+					{ id: 'immediate', label: 'Immediate' },
+				],
+				default: 'normal',
+				isVisibleExpression: 'arrayIncludes($(options:properties), "splice_type")',
+			},
+			{
+				type: 'number',
+				label: 'Pre-Roll (milliseconds)',
+				id: 'pre_roll',
+				min: 0,
+				default: 0,
+				isVisibleExpression: 'arrayIncludes($(options:properties), "pre_roll")',
+			},
+			{
+				type: 'textinput',
+				label: 'Event ID (Hex)',
+				id: 'event_id',
+				default: '',
+				isVisibleExpression: 'arrayIncludes($(options:properties), "event_id")',
+			},
+			{
+				type: 'dropdown',
+				label: 'Network Event',
+				id: 'network_event',
+				choices: [
+					{ id: 'out-of-network', label: 'Out of Network' },
+					{ id: 'return-to-network', label: 'Return to Network' },
+				],
+				default: 'out-of-network',
+				isVisibleExpression: 'arrayIncludes($(options:properties), "network_event")',
+			},
+			{
+				type: 'number',
+				label: 'Break Duration (milliseconds)',
+				id: 'break_duration',
+				min: 0,
+				default: 10000,
+				isVisibleExpression: 'arrayIncludes($(options:properties), "break_duration")',
+			},
+			{
+				type: 'number',
+				label: 'Unique Program ID',
+				id: 'program_id',
+				min: 0,
+				default: 0,
+				isVisibleExpression: 'arrayIncludes($(options:properties), "program_id")',
+			},
+			{
+				type: 'number',
+				label: 'Available Num',
+				id: 'avail_num',
+				min: 0,
+				default: 0,
+				isVisibleExpression: 'arrayIncludes($(options:properties), "avail_num")',
+			},
+			{
+				type: 'number',
+				label: 'Available Expected',
+				id: 'avail_expect',
+				min: 0,
+				default: 0,
+				isVisibleExpression: 'arrayIncludes($(options:properties), "avail_expect")',
+			},
+		],
+		callback: (action) => {
+			const properties = {}
+			if (action.options.properties?.includes('splice_type') && action.options.splice_type) {
+				properties.splice_type = action.options.splice_type
+			}
+			if (action.options.properties?.includes('pre_roll') && action.options.pre_roll) {
+				properties.pre_roll = action.options.pre_roll
+			}
+			if (action.options.properties.includes('event_id') && action.options.event_id) {
+				properties.event_id = action.options.event_id
+			}
+			if (action.options.properties?.includes('network_event') && action.options.network_event) {
+				properties.network_event = action.options.network_event
+			}
+			if (action.options.properties?.includes('break_duration') && action.options.break_duration) {
+				properties.break_duration = action.options.break_duration
+			}
+			if (action.options.properties?.includes('program_id') && action.options.program_id) {
+				properties.program_id = action.options.program_id
+			}
+			if (action.options.properties?.includes('avail_num') && action.options.avail_num) {
+				properties.avail_num = action.options.avail_num
+			}
+			if (action.options.properties?.includes('avail_expect') && action.options.avail_expect) {
+				properties.avail_expect = action.options.avail_expect
+			}
+			if (Object.keys(properties).length === 0) {
+				this.log('warn', 'No properties selected for SCTE message')
+				return
+			}
+			this.sendCommand(`SessionLL/VideoEncoders/0/Metadata/set`, properties)
+		},
+	}
+
+	actions.sendSCTE = {
+		name: 'Send SCTE 35 Message',
+		description:
+			'Sends an SCTE 35 message with the current settings. You can adjust the settings using the "Set SCTE 35 Message Settings" action',
+		options: [],
+		callback: () => {
+			this.sendCommand(`SessionLL/VideoEncoders/0/Metadata/send`, {})
+		},
+	}
+
 	return actions
 }
