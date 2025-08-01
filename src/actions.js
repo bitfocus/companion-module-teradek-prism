@@ -130,12 +130,14 @@ export function getActions() {
 
 	actions.setSCTE = {
 		name: 'Set SCTE 35 Message Settings',
+		description:
+			'Adjust selected SCTE 35 message properties. Requires firmware v2.23.20250722 or later, and a valid license.',
 		options: [
 			{
 				type: 'multidropdown',
 				label: 'Properties',
 				id: 'properties',
-				tooltip: 'Select properties to change. Properties not selected will be left at their existing values.',
+				tooltip: 'Properties not selected will be left at their existing values.',
 				choices: [
 					{ id: 'splice_type', label: 'Splice Type' },
 					{ id: 'pre_roll', label: 'Pre-Roll' },
@@ -152,7 +154,6 @@ export function getActions() {
 				type: 'dropdown',
 				label: 'Splice Type',
 				id: 'splice_type',
-				min: 0,
 				choices: [
 					{ id: 'normal', label: 'Normal' },
 					{ id: 'immediate', label: 'Immediate' },
@@ -179,7 +180,6 @@ export function getActions() {
 				type: 'dropdown',
 				label: 'Network Event',
 				id: 'network_event',
-				min: 0,
 				choices: [
 					{ id: 'out-of-network', label: 'Out of Network' },
 					{ id: 'return-to-network', label: 'Return to Network' },
@@ -247,7 +247,7 @@ export function getActions() {
 				properties.avail_expect = action.options.avail_expect
 			}
 			if (Object.keys(properties).length === 0) {
-				this.log('error', 'No properties selected for SCTE message')
+				this.log('warn', 'No properties selected for SCTE message')
 				return
 			}
 			this.sendCommand(`SessionLL/VideoEncoders/0/Metadata/set`, properties)
@@ -256,6 +256,8 @@ export function getActions() {
 
 	actions.sendSCTE = {
 		name: 'Send SCTE 35 Message',
+		description:
+			'Sends an SCTE 35 message with the current settings. You can adjust the settings using the "Set SCTE 35 Message Settings" action',
 		options: [],
 		callback: () => {
 			this.sendCommand(`SessionLL/VideoEncoders/0/Metadata/send`, {})
