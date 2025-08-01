@@ -318,10 +318,10 @@ class TeradekPrismInstance extends InstanceBase {
 				case 'SessionLL/VideoEncoders/0/Metadata':
 					{
 						this.setVariableValues({
-							scte_splice_type: message.splice_type,
+							scte_splice_type: message.splice_type == 'normal' ? 'Normal' : 'Immediate',
 							scte_pre_roll: message.pre_roll,
 							scte_event_id: message.event_id,
-							scte_network_event: message.network_event,
+							scte_network_event: message.network_event == 'out-of-network' ? 'Out of Network' : 'Return to Network',
 							scte_break_duration: message.break_duration,
 							scte_program_id: message.program_id,
 							scte_avail_num: message.avail_num,
