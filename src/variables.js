@@ -33,5 +33,14 @@ export function getVariables() {
 	variables.push({ variableId: 'encoder_bitrate', name: 'Encoder bitrate' })
 	variables.push({ variableId: 'encoder_codec', name: 'Encoder codec' })
 
+	variables.push({ variableId: 'scte_splice_type', name: 'SCTE 35 Splice Type' })
+	variables.push({ variableId: 'scte_pre_roll', name: 'SCTE 35 Pre Roll' })
+	variables.push({ variableId: 'scte_event_id', name: 'SCTE 35 Event ID' })
+	variables.push({ variableId: 'scte_network_event', name: 'SCTE 35 Network Event' })
+	variables.push({ variableId: 'scte_break_duration', name: 'SCTE 35 Break Duration' })
+	variables.push({ variableId: 'scte_program_id', name: 'SCTE 35 Program ID' })
+	variables.push({ variableId: 'scte_avail_num', name: 'SCTE 35 Avail Num' })
+	variables.push({ variableId: 'scte_avail_expect', name: 'SCTE 35 Avail Expected' })
+
 	return variables
 }

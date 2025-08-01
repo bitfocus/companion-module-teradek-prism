@@ -183,6 +183,7 @@ class TeradekPrismInstance extends InstanceBase {
 			`${this.prefix.streamLL}/RTMP`,
 			`Session/0/VideoEncoder/Info/stream/stream_identity_0`,
 			'SessionLL/VideoEncoders/0/Info',
+			'SessionLL/VideoEncoders/0/Metadata',
 			'Session/0/VideoEncoder',
 			'Session/0/AudioEncoder',
 			'Input/Video/Info',
@@ -311,6 +312,20 @@ class TeradekPrismInstance extends InstanceBase {
 						this.setVariableValues({
 							encoder_format: message.Format,
 							encoder_bitrate: bitrateLL,
+						})
+					}
+					break
+				case 'SessionLL/VideoEncoders/0/Metadata':
+					{
+						this.setVariableValues({
+							scte_splice_type: message.splice_type,
+							scte_pre_roll: message.pre_roll,
+							scte_event_id: message.event_id,
+							scte_network_event: message.network_event,
+							scte_break_duration: message.break_duration,
+							scte_program_id: message.program_id,
+							scte_avail_num: message.avail_num,
+							scte_avail_expect: message.avail_expect,
 						})
 					}
 					break
